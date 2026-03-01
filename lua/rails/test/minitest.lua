@@ -89,12 +89,12 @@ function M.run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
       for _, line in ipairs(result.examples) do
         local decoded = vim.json.decode(line)
         if decoded.status == "PASS" then
-          local text = { config.pass_icon }
+          local text = { config.pass_icon, "DiagnosticOk" }
           vim.api.nvim_buf_set_extmark(bufnr, ns, tonumber(decoded.line) - 1, 0, {
             virt_text = { text }
           })
         else
-          local text = { config.fail_icon }
+          local text = { config.fail_icon, "DiagnosticError" }
           vim.api.nvim_buf_set_extmark(bufnr, ns, tonumber(decoded.line) - 1, 0, {
             virt_text = { text }
           })

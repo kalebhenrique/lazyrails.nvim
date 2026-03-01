@@ -52,8 +52,8 @@ local rails_defaults = {
     notification = {
       timeout = false,
     },
-    pass_icon = "✅",
-    fail_icon = "❌"
+    pass_icon = "✔",
+    fail_icon = "✖"
   }
 }
 

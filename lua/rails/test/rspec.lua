@@ -82,7 +82,7 @@ function M.run(test_path, bufnr, ns, terminal_bufnr, notify_record)
       for _, decoded in ipairs(result.examples) do
         if string.find(decoded.file_path, vim.fn.fnamemodify(test_path, ":t:r")) ~= nil then
           if decoded.status == "passed" or decoded.status == "pending" then
-            local text = { config.pass_icon }
+            local text = { config.pass_icon, "DiagnosticOk" }
             vim.api.nvim_buf_set_extmark(bufnr, ns, tonumber(decoded.line_number) - 1, 0, {
               virt_text = { text }
             })
@@ -103,7 +103,7 @@ function M.run(test_path, bufnr, ns, terminal_bufnr, notify_record)
             local fail_backtrace = filter_backtrace(decoded.exception.backtrace)[1]
             local example_line = string.match(fail_backtrace, ":([^:]+)")
 
-            local text = { config.fail_icon }
+            local text = { config.fail_icon, "DiagnosticError" }
             vim.api.nvim_buf_set_extmark(bufnr, ns, tonumber(example_line) - 1, 0, {
               virt_text = { text }
             })
