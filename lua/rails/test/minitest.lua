@@ -40,13 +40,13 @@ end
 function M.run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
   M.statistics = nil
 
-  local command = { "bundle", "exec", "rails", "test", test_path, "--json" }
+  local command = { "bundle", "exec", "ruby", "-Itest", "-rminitest/json_reporter", test_path, "--json" }
 
   if is_rails() == false then
     if test_name ~= "" then
-      command = { "bundle", "exec", "ruby", "-Ilib:test", test_path, "--name", test_name, "--json" }
+      command = { "bundle", "exec", "ruby", "-Ilib:test", "-rminitest/json_reporter", test_path, "--name", test_name, "--json" }
     else
-      command = { "bundle", "exec", "ruby", "-Ilib:test", test_path, "--json" }
+      command = { "bundle", "exec", "ruby", "-Ilib:test", "-rminitest/json_reporter", test_path, "--json" }
     end
   end
 
