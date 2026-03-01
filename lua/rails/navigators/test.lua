@@ -1,93 +1,98 @@
+-- Navigate from an app file to its associated test or spec file.
+-- Supports both minitest (test/) and RSpec (spec/) projects.
 local M = {}
 
-local pickers = require "telescope.pickers"
-local finders = require "telescope.finders"
-local previewers = require "telescope.previewers"
-local conf = require("telescope.config").values
+local function open_file(path, mode)
+  if mode == "vsplit" then
+    vim.cmd.vsplit(path)
+  else
+    vim.cmd.edit(path)
+  end
+end
+
+local function show_picker(title, results, mode)
+  local pickers   = require "telescope.pickers"
+  local finders   = require "telescope.finders"
+  local previewers = require "telescope.previewers"
+  local conf      = require("telescope.config").values
+  local opts = {}
+  pickers.new(opts, {
+    prompt_title = title,
+    finder = finders.new_table { results = results },
+    previewer = previewers.vim_buffer_cat.new(opts),
+    sorter = conf.generic_sorter(opts),
+    attach_mappings = function(prompt_bufnr, map)
+      local actions = require "telescope.actions"
+      local action_state = require "telescope.actions.state"
+      -- override the default select action to respect vsplit mode
+      actions.select_default:replace(function()
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        if selection then
+          open_file(selection[1], mode)
+        end
+      end)
+      return true
+    end,
+  }):find()
+end
+
+local function notify_not_found(name)
+  local ok, nvim_notify = pcall(require, "notify")
+  if ok then
+    nvim_notify("No test file for: " .. name, vim.log.levels.WARN,
+      { title = "Test file not found", timeout = 2500 })
+  else
+    vim.notify("Test file not found: " .. name)
+  end
+end
+
+--- Collect candidates from minitest (test/) and rspec (spec/) for a given
+--- subdirectory and base name pattern.
+--- @param subdir string  e.g. "models" or "controllers"
+--- @param pattern string e.g. "*users_controller*"
+--- @return string[]
+local function find_tests(subdir, pattern)
+  local results = {}
+  local minitest = vim.split(
+    vim.fn.system({ "find", "test/" .. subdir, "-name", pattern .. "_test.rb" }), "\n")
+  local rspec = vim.split(
+    vim.fn.system({ "find", "spec/" .. subdir, "-name", pattern .. "_spec.rb" }), "\n")
+  for _, f in ipairs(minitest) do
+    if f ~= "" then table.insert(results, f) end
+  end
+  for _, f in ipairs(rspec) do
+    if f ~= "" then table.insert(results, f) end
+  end
+  return results
+end
 
 function M.visit(mode)
-  local current_relative_file_path = vim.fn.expand("%:~:.")
+  local current = vim.fn.expand("%:~:.")
 
-  if string.match(current_relative_file_path, "app/models") then
-    local model_name = vim.fn.fnamemodify(current_relative_file_path, ":t:r")
-    local test_name = model_name .. "_test.rb"
+  local subdir, base_name, picker_title
 
-    local tests = vim.split(vim.fn.system({ "find", "test/models", "-name", test_name }), "\n")
-    local parsed_tests = {}
-    for _, test in pairs(tests) do
-      if test ~= "" then
-        table.insert(parsed_tests, test)
-      end
-    end
+  if string.match(current, "app/models") then
+    base_name    = vim.fn.fnamemodify(current, ":t:r")
+    subdir       = "models"
+    picker_title = "Model Tests"
+  elseif string.match(current, "app/controllers") then
+    base_name    = vim.fn.fnamemodify(current, ":t:r")
+    subdir       = "controllers"
+    picker_title = "Controller Tests"
+  else
+    vim.notify("lazyrails: go_to_test not supported for this file type", vim.log.levels.WARN)
+    return
+  end
 
-    if #parsed_tests > 1 then
-      local opts = {}
-      pickers.new(opts, {
-        prompt_title = "Model Tests",
-        finder = finders.new_table {
-          results = parsed_tests
-        },
-        previewer = previewers.vim_buffer_cat.new(opts),
-        sorter = conf.generic_sorter(opts),
-      }):find()
-    elseif #parsed_tests == 1 then
-      if mode == "normal" then
-        vim.cmd.edit(parsed_tests[1])
-      elseif mode == "vsplit" then
-        vim.cmd.vsplit(parsed_tests[1])
-      end
-    else
-      local nvim_notify_ok, nvim_notify = pcall(require, 'notify')
-      if nvim_notify_ok then
-        nvim_notify(
-          "No test with name: " .. test_name,
-          vim.log.levels.ERROR,
-          { title = "Test file not found", timeout = 2500 }
-        )
-      else
-        vim.notify("Test file not found")
-      end
-    end
-  elseif string.match(current_relative_file_path, "app/controllers") then
-    local controller_name = vim.fn.fnamemodify(current_relative_file_path, ":t:r")
-    local test_name = controller_name .. "_test.rb"
+  local candidates = find_tests(subdir, base_name)
 
-    local tests = vim.split(vim.fn.system({ "find", "test/controllers", "-name", test_name }), "\n")
-    local parsed_tests = {}
-    for _, test in pairs(tests) do
-      if test ~= "" then
-        table.insert(parsed_tests, test)
-      end
-    end
-
-    if #parsed_tests > 1 then
-      local opts = {}
-      pickers.new(opts, {
-        prompt_title = "Controller Tests",
-        finder = finders.new_table {
-          results = parsed_tests
-        },
-        previewer = previewers.vim_buffer_cat.new(opts),
-        sorter = conf.generic_sorter(opts),
-      }):find()
-    elseif #parsed_tests == 1 then
-      if mode == "normal" then
-        vim.cmd.edit(parsed_tests[1])
-      elseif mode == "vsplit" then
-        vim.cmd.vsplit(parsed_tests[1])
-      end
-    else
-      local nvim_notify_ok, nvim_notify = pcall(require, 'notify')
-      if nvim_notify_ok then
-        nvim_notify(
-          "No test with name: " .. test_name,
-          vim.log.levels.ERROR,
-          { title = "Test file not found", timeout = 2500 }
-        )
-      else
-        vim.notify("Test file not found")
-      end
-    end
+  if #candidates > 1 then
+    show_picker(picker_title, candidates, mode)
+  elseif #candidates == 1 then
+    open_file(candidates[1], mode)
+  else
+    notify_not_found(base_name)
   end
 end
 

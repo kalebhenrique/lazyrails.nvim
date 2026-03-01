@@ -1,4 +1,4 @@
-_RorConfig = _RorConfig or {}
+_RailsConfig = _RailsConfig or {}
 
 --- Credit to Telescope code base
 --- https://github.com/nvim-telescope/telescope.nvim/blob/master/lua/telescope/config.lua
@@ -37,9 +37,9 @@ end
 
 local config = {}
 
-config.values = _RorConfig
+config.values = _RailsConfig
 
-local ror_defaults = {
+local rails_defaults = {
   test = {
     message = {
       file = "Running test file",
@@ -59,7 +59,7 @@ local ror_defaults = {
 
 function config.set_defaults(user_defaults)
   user_defaults = vim.F.if_nil(user_defaults, {})
-  ror_defaults = ror_defaults
+  rails_defaults = rails_defaults
 
   local function get(name, default_val)
     if name == "test" then
@@ -76,7 +76,7 @@ function config.set_defaults(user_defaults)
     config.values[name] = get(name, default_val)
   end
 
-  for key, info in pairs(ror_defaults) do
+  for key, info in pairs(rails_defaults) do
     set(key, info)
   end
 end

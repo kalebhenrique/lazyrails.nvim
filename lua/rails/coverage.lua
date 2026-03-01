@@ -1,5 +1,5 @@
 local Path = require("plenary.path")
-local config = require("ror.config").values.test
+local config = require("rails.config").values.test
 
 local M = {}
 
@@ -8,18 +8,18 @@ function M.show()
   local down_hl_group = config.coverage.down
 
   if up_hl_group ~= "DiffAdd" then
-    if vim.fn.hlexists("RorCoverageUp") == 0 then
-      vim.api.nvim_command("hi RorCoverageUp " .. config.coverage.up)
+    if vim.fn.hlexists("RailsCoverageUp") == 0 then
+      vim.api.nvim_command("hi RailsCoverageUp " .. config.coverage.up)
     end
 
-    up_hl_group = "RorCoverageUp"
+    up_hl_group = "RailsCoverageUp"
   end
   if down_hl_group ~= "DiffDelete" then
-    if vim.fn.hlexists("RorCoverageDown") == 0 then
-      vim.api.nvim_command("hi RorCoverageDown " .. config.coverage.down)
+    if vim.fn.hlexists("RailsCoverageDown") == 0 then
+      vim.api.nvim_command("hi RailsCoverageDown " .. config.coverage.down)
     end
 
-    down_hl_group = "RorCoverageDown"
+    down_hl_group = "RailsCoverageDown"
   end
 
   local root_path = vim.fn.getcwd()
@@ -31,7 +31,7 @@ function M.show()
   local coverage = vim.fn.json_decode(Path:new(json_coverage_file_path):read())
 
   local original_file_path = root_path .. "/" .. vim.fn.expand('%')
-  local ns = vim.api.nvim_create_namespace("ror-coverage")
+  local ns = vim.api.nvim_create_namespace("lazyrails-coverage")
   local bufnr = vim.api.nvim_get_current_buf()
 
   local function get_current_file_coverage(table)
@@ -97,7 +97,7 @@ function M.show()
 end
 
 function M.clear()
-  local ns = vim.api.nvim_create_namespace("ror-coverage")
+  local ns = vim.api.nvim_create_namespace("lazyrails-coverage")
   local bufnr = vim.api.nvim_get_current_buf()
 
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)

@@ -1,5 +1,5 @@
-local config = require("ror.config").values.test
-local notify_instance = require("ror.test.notify")
+local config = require("rails.config").values.test
+local notify_instance = require("rails.test.notify")
 
 local M = {}
 
@@ -39,7 +39,7 @@ end
 local function run(type)
   local is_rails = vim.fn.glob(vim.fn.getcwd() .. "/bin/rails") ~= ''
   local bufnr = vim.api.nvim_get_current_buf()
-  local ns = vim.api.nvim_create_namespace("ror-minitest")
+  local ns = vim.api.nvim_create_namespace("lazyrails-test")
   local relative_file_path = vim.fn.expand("%:~:.")
   local cursor_position = vim.api.nvim_win_get_cursor(0)[1]
   local test_name = ""
@@ -106,16 +106,16 @@ local function run(type)
 
   vim.api.nvim_buf_call(terminal_bufnr, function()
     if string.find(test_path, "_spec.rb") then
-      require("ror.test.rspec").run(test_path, bufnr, ns, terminal_bufnr, notify_record)
+      require("rails.test.rspec").run(test_path, bufnr, ns, terminal_bufnr, notify_record)
     else
-      require("ror.test.minitest").run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
+      require("rails.test.minitest").run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
     end
   end)
 end
 
 local function clear()
   local bufnr = vim.api.nvim_get_current_buf()
-  local ns = vim.api.nvim_create_namespace("ror-minitest")
+  local ns = vim.api.nvim_create_namespace("lazyrails-test")
   -- Clear extmark
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
   -- Hide current diagnostic

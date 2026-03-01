@@ -1,4 +1,4 @@
-local config = require("ror.config").values.test
+local config = require("rails.config").values.test
 
 local M = {}
 

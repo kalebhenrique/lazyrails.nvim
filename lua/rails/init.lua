@@ -1,9 +1,9 @@
-local ror = {}
+local lazyrails = {}
 
-function ror.setup(opts)
+function lazyrails.setup(opts)
   opts = opts or {}
 
-  require("ror.config").set_defaults(opts)
+  require("rails.config").set_defaults(opts)
 end
 
-return ror
+return lazyrails

@@ -1,6 +1,6 @@
-local config = require("ror.config").values.test
-local coverage = require("ror.test.coverage")
-local notify_instance = require("ror.test.notify")
+local config = require("rails.config").values.test
+local coverage = require("rails.test.coverage")
+local notify_instance = require("rails.test.notify")
 
 local M = {}
 
