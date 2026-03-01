@@ -6,7 +6,7 @@
 local wk_ok, wk = pcall(require, "which-key")
 if wk_ok then
   wk.add({
-    { "<leader>r",  group = "Rails" },
+    { "<leader>r",  icon = " ", group = "Rails" },
     { "<leader>rn", group = "Navigate" },
   })
 end
