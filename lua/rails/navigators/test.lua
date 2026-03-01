@@ -54,15 +54,19 @@ end
 --- @return string[]
 local function find_tests(subdir, pattern)
   local results = {}
-  local minitest = vim.split(
-    vim.fn.system({ "find", "test/" .. subdir, "-name", pattern .. "_test.rb" }), "\n")
-  local rspec = vim.split(
-    vim.fn.system({ "find", "spec/" .. subdir, "-name", pattern .. "_spec.rb" }), "\n")
-  for _, f in ipairs(minitest) do
-    if f ~= "" then table.insert(results, f) end
+  if vim.fn.isdirectory("test/" .. subdir) == 1 then
+    local minitest = vim.split(
+      vim.fn.system({ "find", "test/" .. subdir, "-name", pattern .. "_test.rb" }), "\n")
+    for _, f in ipairs(minitest) do
+      if f ~= "" then table.insert(results, f) end
+    end
   end
-  for _, f in ipairs(rspec) do
-    if f ~= "" then table.insert(results, f) end
+  if vim.fn.isdirectory("spec/" .. subdir) == 1 then
+    local rspec = vim.split(
+      vim.fn.system({ "find", "spec/" .. subdir, "-name", pattern .. "_spec.rb" }), "\n")
+    for _, f in ipairs(rspec) do
+      if f ~= "" then table.insert(results, f) end
+    end
   end
   return results
 end
