@@ -38,6 +38,8 @@ local function get_coverage_percentage(test_path)
 end
 
 function M.run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
+  M.statistics = nil
+
   local command = { "rails", "test", test_path, "--json" }
 
   if is_rails() == false then
@@ -65,6 +67,12 @@ function M.run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
       local filtered_result = filter_response(data)
 
       if not filtered_result then
+        -- Dump raw output so the user can see what the test runner actually returned
+        local raw = table.concat(data, "\n")
+        vim.notify(
+          "lazyrails: could not find JSON in test output.\n\nMake sure test_helper.rb has:\n  require \"minitest/json_reporter\"\n\nRaw output (first 500 chars):\n" .. raw:sub(1, 500),
+          vim.log.levels.WARN
+        )
         return
       end
 
@@ -119,10 +127,21 @@ function M.run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
       end
     end,
     on_exit = function()
+      if not M.statistics then
+        notify_instance.notify(
+          "No JSON output received – check that minitest-json-reporter is installed and the test ran correctly.",
+          vim.log.levels.WARN,
+          notify_record,
+          { bufnr = bufnr, title = "Result: " .. vim.fn.fnamemodify(test_path, ":t") }
+        )
+        vim.api.nvim_buf_delete(terminal_bufnr, {})
+        return
+      end
+
       local coverage_ok, coverage_percentage = pcall(get_coverage_percentage, test_path)
 
       -- Set the statistics window
-      local message = "Assertions: " .. M.statistics.assertions .. ", Failures: " .. M.statistics.failures
+      local message = "Assertions: " .. (M.statistics.assertions or "?") .. ", Failures: " .. (M.statistics.failures or "?")
 
       if coverage_ok and coverage_percentage ~= nil then
         local formatted_coverage = string.format("%.2f%%", coverage_percentage)
