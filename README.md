@@ -3,8 +3,14 @@
 Neovim plugin for Ruby on Rails – focused on **navigation** and **test running**,
 designed for [LazyVim](https://www.lazyvim.org/) with sensible `<leader>r` keybindings.
 
-Inspired by (and partially derived from) [ror.nvim](https://github.com/weizheheng/ror.nvim) by Wei Zhe.
+Inspired by [ror.nvim](https://github.com/weizheheng/ror.nvim) by Wei Zhe.
 Credits are retained in the MIT License.
+
+
+
+https://github.com/user-attachments/assets/3a4a105e-87c5-4944-b263-a972c37079c6
+
+
 
 ---
 
