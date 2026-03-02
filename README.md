@@ -23,8 +23,7 @@ When multiple candidates exist a **Telescope picker** opens automatically.
 
 Supports both **minitest** (`test/`) and **RSpec** (`spec/`) projects.
 
-<img width="314" height="231" alt="image" src="https://github.com/user-attachments/assets/0ceb7525-6b5b-4a16-96cc-761ae96e8963" />
-
+<img width="451" height="231" alt="image" src="https://github.com/user-attachments/assets/ebd67afb-f89d-4a2a-91ba-7b35d0a5e8a6" />
 
 ### Test runner
 Run specs/tests without leaving the editor.  
