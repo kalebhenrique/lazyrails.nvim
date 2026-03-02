@@ -45,10 +45,6 @@ local rails_defaults = {
       file = "Running test file",
       line = "Running single test"
     },
-    coverage = {
-      up = "DiffAdd",
-      down = "DiffDelete",
-    },
     notification = {
       timeout = false,
     },

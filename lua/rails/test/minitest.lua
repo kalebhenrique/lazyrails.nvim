@@ -1,5 +1,4 @@
 local config = require("rails.config").values.test
-local coverage = require("rails.test.coverage")
 local notify_instance = require("rails.test.notify")
 
 local M = {}
@@ -12,29 +11,6 @@ local function is_rails()
   else
     return true
   end
-end
-
-local function get_coverage_percentage(test_path)
-  local root_path = vim.fn.getcwd()
-  local function get_replace_path()
-    if is_rails() then
-      return "/app"
-    else
-      return "/lib"
-    end
-  end
-
-  local original_file_path = string.gsub(test_path, "test", get_replace_path, 1)
-
-  original_file_path = root_path .. string.gsub(original_file_path, "_test", "")
-
-  local _, finish = string.find(original_file_path, ".rb")
-
-  if finish ~= nil then
-    original_file_path = string.sub(original_file_path, 1, finish)
-  end
-
-  return coverage.percentage(original_file_path)
 end
 
 function M.run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
@@ -138,15 +114,7 @@ function M.run(test_path, test_name, bufnr, ns, terminal_bufnr, notify_record)
         return
       end
 
-      local coverage_ok, coverage_percentage = pcall(get_coverage_percentage, test_path)
-
-      -- Set the statistics window
       local message = "Assertions: " .. (M.statistics.assertions or "?") .. ", Failures: " .. (M.statistics.failures or "?")
-
-      if coverage_ok and coverage_percentage ~= nil then
-        local formatted_coverage = string.format("%.2f%%", coverage_percentage)
-        message = message .. ", Coverage: " .. formatted_coverage
-      end
 
       local kind
 

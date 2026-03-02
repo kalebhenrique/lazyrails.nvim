@@ -35,8 +35,6 @@ Results (pass ✅ / fail ❌) are shown inline in the buffer as virtual text and
 | Run **whole** test file | `<leader>rt` |
 | Run test at **current line** | `<leader>rl` |
 | Clear test results | `<leader>rX` |
-| Toggle test terminal | `<leader>r\`` |
-| Show coverage highlights | `<leader>rC` |
 
 RSpec requires no extra setup.  
 Minitest requires [`minitest-json-reporter`](https://rubygems.org/gems/minitest-json-reporter) and **minitest 5.x** (minitest 6+ is not yet compatible with Rails 8):
@@ -102,8 +100,6 @@ require("lazyrails").setup({
 | `<leader>rt` | `RailsTestRun` | Run test file |
 | `<leader>rl` | `RailsTestRun Line` | Run test at cursor line |
 | `<leader>rX` | `RailsTestClear` | Clear test results |
-| `<leader>r\`` | `RailsTestTerminal` | Toggle test terminal |
-| `<leader>rC` | `RailsCoverageShow` | Show coverage highlights |
 
 All keys live under the **`Rails`** group visible in which-key.
 

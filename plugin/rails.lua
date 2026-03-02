@@ -19,11 +19,7 @@ end, {
   complete = function() return { "Line" } end,
 })
 
-vim.api.nvim_create_user_command("RailsTestClear",  function() require("rails.test").clear() end, {})
-vim.api.nvim_create_user_command("RailsTestTerminal", function() require("rails.test").attach_terminal() end, {})
-
-vim.api.nvim_create_user_command("RailsCoverageShow",  function() require("rails.coverage").show() end, {})
-vim.api.nvim_create_user_command("RailsCoverageClear", function() require("rails.coverage").clear() end, {})
+vim.api.nvim_create_user_command("RailsTestClear", function() require("rails.test").clear() end, {})
 
 vim.api.nvim_create_user_command("RailsGoModel",      function() require("rails.navigations").go_to_model("normal") end, {})
 vim.api.nvim_create_user_command("RailsGoController", function() require("rails.navigations").go_to_controller("normal") end, {})
@@ -38,11 +34,7 @@ end
 -- Test runner
 map("<leader>rt", function() require("rails.test").run() end,        "Rails: run test file")
 map("<leader>rl", function() require("rails.test").run("Line") end,  "Rails: run test at line")
-map("<leader>rX", function() require("rails.test").clear() end,      "Rails: clear test results")
-map("<leader>r`", function() require("rails.test").attach_terminal() end, "Rails: toggle test terminal")
-
--- Coverage
-map("<leader>rC", function() require("rails.coverage").show() end,   "Rails: show coverage")
+map("<leader>rX", function() require("rails.test").clear() end, "Rails: clear test results")
 
 -- Navigation  (skip if already on the target file)
 map("<leader>rm", function() require("rails.navigations").go_to_model("normal") end,      "Rails: go to Model")

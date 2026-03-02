@@ -3,39 +3,6 @@ local notify_instance = require("rails.test.notify")
 
 local M = {}
 
-local function non_empty_last_line(bufnr)
-  local lines = vim.fn.getbufline(bufnr, 1, '$')
-
-  local line = ""
-
-  for i = #lines, 1, -1 do
-    if lines[i] ~= "" then
-      line = lines[i]
-
-      break
-    end
-  end
-
-  return line
-end
-
-local function verify_debugger()
-  if M.terminal_bufnr and vim.fn.bufexists(M.terminal_bufnr) then
-    local last_line = non_empty_last_line(M.terminal_bufnr)
-
-    if last_line == '[Process exited 1]' or vim.fn.bufnr() == M.terminal_bufnr then
-      return
-    elseif last_line:match('%(byebug%)') or last_line:match('pry%(#.*%)') or last_line:match('%(rdbg%)') or last_line == ':' then
-      M.attach_terminal()
-      vim.cmd("startinsert")
-    else
-      vim.fn.timer_start(500, function ()
-        verify_debugger()
-      end)
-    end
-  end
-end
-
 local function run(type)
   local is_rails = vim.fn.glob(vim.fn.getcwd() .. "/bin/rails") ~= ''
   local bufnr = vim.api.nvim_get_current_buf()
@@ -97,13 +64,6 @@ local function run(type)
 
   local terminal_bufnr = vim.api.nvim_create_buf(false, true)
 
-  M.terminal_bufnr = terminal_bufnr
-
-  vim.fn.timer_start(500, function ()
-    verify_debugger()
-  end)
-
-
   vim.api.nvim_buf_call(terminal_bufnr, function()
     if string.find(test_path, "_spec.rb") then
       require("rails.test.rspec").run(test_path, bufnr, ns, terminal_bufnr, notify_record)
@@ -130,39 +90,6 @@ end
 
 function M.clear()
   clear()
-end
-
-function M.attach_terminal()
-  if M.terminal_bufnr ~= nil and vim.fn.buffer_exists(M.terminal_bufnr) ~= 0 then
-    local ui = vim.api.nvim_list_uis()[1]
-    local width = math.floor((ui.width * 0.5) + 0.5)
-    local height = math.floor((ui.height * 0.5) + 0.5)
-
-    local term_buf_info = vim.fn.getbufinfo(M.terminal_bufnr)[1]
-
-    local window_config = {
-      relative = "editor",
-      anchor = "SW",
-      width = width,
-      height = height,
-      col = (ui.width - width) / 2,
-      row = (ui.height - height),
-      style = 'minimal',
-      border = "double"
-    }
-
-    if term_buf_info.hidden == 1 then
-      vim.api.nvim_open_win(
-        M.terminal_bufnr,
-        true,
-        window_config
-      )
-    else
-      vim.api.nvim_win_close(0, true)
-    end
-  else
-    print("No active terminal buffer to attach to.")
-  end
 end
 
 return M
