@@ -35,7 +35,7 @@ Results (pass ✅ / fail ❌) are shown inline in the buffer as virtual text and
 | Clear test results | `<leader>rX` |
 
 RSpec requires no extra setup.  
-Minitest requires [`minitest-json-reporter`](https://rubygems.org/gems/minitest-json-reporter) and **minitest 5.x** (minitest 6+ is not yet compatible with Rails 8):
+Minitest requires [`minitest-json-reporter`](https://rubygems.org/gems/minitest-json-reporter) and **minitest 5.x** (minitest 6+ is not yet compatible):
 
 ```ruby
 # Gemfile
@@ -45,8 +45,6 @@ group :test do
   gem "minitest-json-reporter"
 end
 ```
-
-> **Note:** Rails 8 ships with minitest 6 by default, which has a breaking API change that also affects `rails test` itself. Pinning to `~> 5.25` restores compatibility.
 
 ---
 
