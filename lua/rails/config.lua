@@ -43,7 +43,6 @@ local rails_defaults = {
   test = {
     message = {
       file = "Running test file",
-      line = "Running single test"
     },
     notification = {
       timeout = false,

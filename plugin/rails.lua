@@ -12,12 +12,7 @@ if wk_ok then
 end
 
 -- ── User commands ───────────────────────────────────────────────────────────
-vim.api.nvim_create_user_command("RailsTestRun", function(attr)
-  require("rails.test").run(attr.args ~= "" and attr.args or nil)
-end, {
-  nargs = "?",
-  complete = function() return { "Line" } end,
-})
+vim.api.nvim_create_user_command("RailsTestRun", function() require("rails.test").run() end, {})
 
 vim.api.nvim_create_user_command("RailsTestClear", function() require("rails.test").clear() end, {})
 
@@ -32,8 +27,7 @@ local map = function(lhs, rhs, desc)
 end
 
 -- Test runner
-map("<leader>rt", function() require("rails.test").run() end,        "Rails: run test file")
-map("<leader>rl", function() require("rails.test").run("Line") end,  "Rails: run test at line")
+map("<leader>rt", function() require("rails.test").run() end,  "Rails: run test file")
 map("<leader>rX", function() require("rails.test").clear() end, "Rails: clear test results")
 
 -- Navigation  (skip if already on the target file)
