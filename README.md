@@ -33,7 +33,6 @@ Results (pass ✅ / fail ❌) are shown inline in the buffer as virtual text and
 | Action | Key |
 |---|---|
 | Run **whole** test file | `<leader>rt` |
-| Run test at **current line** | `<leader>rl` |
 | Clear test results | `<leader>rX` |
 
 RSpec requires no extra setup.  
@@ -76,7 +75,6 @@ require("lazyrails").setup({
     pass_icon = "✅",
     fail_icon = "❌",
     notification = { timeout = false },
-    coverage   = { up = "DiffAdd", down = "DiffDelete" },
   },
 })
 ```
@@ -98,7 +96,6 @@ require("lazyrails").setup({
 | `<leader>rv` | `RailsGoView` | Go to view |
 | `<leader>rs` | `RailsGoTest` | Go to test / spec file |
 | `<leader>rt` | `RailsTestRun` | Run test file |
-| `<leader>rl` | `RailsTestRun Line` | Run test at cursor line |
 | `<leader>rX` | `RailsTestClear` | Clear test results |
 
 All keys live under the **`Rails`** group visible in which-key.
