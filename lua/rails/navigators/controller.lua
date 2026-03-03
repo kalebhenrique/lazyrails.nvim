@@ -54,6 +54,58 @@ function M.visit(mode)
         vim.notify("Controller file not found")
       end
     end
+  elseif string.match(current_relative_file_path, "app/views") then
+    local view_subdir = current_relative_file_path:match("app/views/(.+)/[^/]+$")
+    if not view_subdir then return end
+
+    local parsed_controllers = {}
+
+    local expected_path = "app/controllers/" .. view_subdir .. "_controller.rb"
+    if vim.fn.filereadable(expected_path) == 1 then
+      table.insert(parsed_controllers, expected_path)
+    end
+
+    if #parsed_controllers == 0 then
+      local folder_name = view_subdir:match("([^/]+)$")
+      local found = vim.split(
+        vim.fn.system({ "find", "app/controllers", "-name", folder_name .. "_controller.rb" }),
+        "\n"
+      )
+      for _, c in pairs(found) do
+        if c ~= "" then table.insert(parsed_controllers, c) end
+      end
+    end
+
+    if #parsed_controllers > 1 then
+      local pickers   = require "telescope.pickers"
+      local finders   = require "telescope.finders"
+      local previewers = require "telescope.previewers"
+      local conf      = require("telescope.config").values
+      local opts = {}
+      pickers.new(opts, {
+        prompt_title = "Controllers",
+        finder = finders.new_table { results = parsed_controllers },
+        previewer = previewers.vim_buffer_cat.new(opts),
+        sorter = conf.generic_sorter(opts),
+      }):find()
+    elseif #parsed_controllers == 1 then
+      if mode == "normal" then
+        vim.cmd.edit(parsed_controllers[1])
+      elseif mode == "vsplit" then
+        vim.cmd.vsplit(parsed_controllers[1])
+      end
+    else
+      local nvim_notify_ok, nvim_notify = pcall(require, 'notify')
+      if nvim_notify_ok then
+        nvim_notify(
+          "No controller found for view: " .. view_subdir,
+          vim.log.levels.ERROR,
+          { title = "Controller file not found", timeout = 2500 }
+        )
+      else
+        vim.notify("Controller file not found")
+      end
+    end
   elseif string.match(current_relative_file_path, "test/controllers") then
     local controller_name = vim.fn.fnamemodify(current_relative_file_path, ":t:r")
     -- Can go from controller test -> controller
