@@ -106,7 +106,10 @@ function M.run(test_path, bufnr, ns, terminal_bufnr, notify_record)
       local message = "Examples: " .. M.summary.example_count .. ", Failures: " .. M.summary.failure_count
 
       local kind
-      if M.summary.failure_count and M.summary.failure_count > 0 then
+      if M.summary.example_count == 0 then
+        kind = vim.log.levels.WARN
+        message = message .. "\n⚠ No examples found — check path:\n" .. test_path
+      elseif M.summary.failure_count and M.summary.failure_count > 0 then
         kind = vim.log.levels.ERROR
       else
         kind = vim.log.levels.INFO

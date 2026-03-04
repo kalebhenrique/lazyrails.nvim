@@ -6,7 +6,7 @@ local M = {}
 local function run()
   local bufnr = vim.api.nvim_get_current_buf()
   local ns = vim.api.nvim_create_namespace("lazyrails-test")
-  local relative_file_path = vim.fn.expand("%:~:.")
+  local relative_file_path = vim.fn.expand("%:.")
   local test_path = relative_file_path
 
   -- Clear extmark
