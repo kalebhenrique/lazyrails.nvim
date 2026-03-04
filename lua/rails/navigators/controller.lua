@@ -155,6 +155,50 @@ function M.visit(mode)
         vim.notify("Controller file not found")
       end
     end
+  elseif string.match(current_relative_file_path, "app/frontend/pages") then
+    local component = current_relative_file_path:match("app/frontend/pages/(.+)%.[jt]sx?$")
+    if not component then return end
+
+    local grep_out = vim.fn.system({
+      "grep", "-rl", "inertia:.*[\"']" .. component .. "[\"']", "app/controllers"
+    })
+    local controllers = {}
+    for _, line in ipairs(vim.split(grep_out, "\n")) do
+      if line ~= "" then
+        table.insert(controllers, line)
+      end
+    end
+
+    if #controllers > 1 then
+      local pickers   = require "telescope.pickers"
+      local finders   = require "telescope.finders"
+      local previewers = require "telescope.previewers"
+      local conf      = require("telescope.config").values
+      local opts = {}
+      pickers.new(opts, {
+        prompt_title = "Controllers",
+        finder = finders.new_table { results = controllers },
+        previewer = previewers.vim_buffer_cat.new(opts),
+        sorter = conf.generic_sorter(opts),
+      }):find()
+    elseif #controllers == 1 then
+      if mode == "normal" then
+        vim.cmd.edit(controllers[1])
+      elseif mode == "vsplit" then
+        vim.cmd.vsplit(controllers[1])
+      end
+    else
+      local nvim_notify_ok, nvim_notify = pcall(require, "notify")
+      if nvim_notify_ok then
+        nvim_notify(
+          "No controller renders inertia: \"" .. component .. "\"",
+          vim.log.levels.ERROR,
+          { title = "Controller file not found", timeout = 2500 }
+        )
+      else
+        vim.notify("Controller file not found")
+      end
+    end
   end
 end
 
