@@ -24,23 +24,18 @@ vim.api.nvim_create_user_command("RailsGoView",       function() require("rails.
 vim.api.nvim_create_user_command("RailsGoTest",       function() require("rails.navigations").go_to_test("normal") end, {})
 
 -- ── Keybindings ─────────────────────────────────────────────────────────────
-vim.api.nvim_create_autocmd("VimEnter", {
-  once = true,
-  callback = function()
-    local map = function(lhs, rhs, desc)
-      vim.keymap.set("n", lhs, rhs, { silent = true, desc = desc })
-    end
+local map = function(lhs, rhs, desc)
+  vim.keymap.set("n", lhs, rhs, { silent = true, desc = desc })
+end
 
-    local view_desc = is_inertia_project() and "Rails: go to Page" or "Rails: go to View"
+local view_desc = is_inertia_project() and "Rails: go to Page" or "Rails: go to View"
 
-    -- Test runner
-    map("<leader>rt", function() require("rails.test").run() end,  "Rails: run test file")
-    map("<leader>rX", function() require("rails.test").clear() end, "Rails: clear test results")
+-- Test runner
+map("<leader>rt", function() require("rails.test").run() end,  "Rails: run test file")
+map("<leader>rX", function() require("rails.test").clear() end, "Rails: clear test results")
 
-    -- Navigation
-    map("<leader>rm", function() require("rails.navigations").go_to_model("normal") end,      "Rails: go to Model")
-    map("<leader>rc", function() require("rails.navigations").go_to_controller("normal") end, "Rails: go to Controller")
-    map("<leader>rv", function() require("rails.navigations").go_to_view() end,               view_desc)
-    map("<leader>rs", function() require("rails.navigations").go_to_test("normal") end,       "Rails: go to Spec/Test file")
-  end,
-})
+-- Navigation
+map("<leader>rm", function() require("rails.navigations").go_to_model("normal") end,      "Rails: go to Model")
+map("<leader>rc", function() require("rails.navigations").go_to_controller("normal") end, "Rails: go to Controller")
+map("<leader>rv", function() require("rails.navigations").go_to_view() end,               view_desc)
+map("<leader>rs", function() require("rails.navigations").go_to_test("normal") end,       "Rails: go to Spec/Test file")
