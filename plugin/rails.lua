@@ -51,9 +51,9 @@ end
 
 -- Keys to suppress per context (the one you're already in has no "go to" value)
 local hide_per_context = {
-  model      = { "<leader>rm" },
-  controller = { "<leader>rc" },
-  view       = { "<leader>rm", "<leader>rv", "<leader>rs" },
+  model      = { "<leader>rm", "<leader>rt", "<leader>rX" },
+  controller = { "<leader>rc", "<leader>rt", "<leader>rX" },
+  view       = { "<leader>rm", "<leader>rv", "<leader>rs", "<leader>rt", "<leader>rX" },
   test       = { "<leader>rs" },
 }
 
