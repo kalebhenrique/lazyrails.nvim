@@ -39,3 +39,19 @@ map("<leader>rm", function() require("rails.navigations").go_to_model("normal") 
 map("<leader>rc", function() require("rails.navigations").go_to_controller("normal") end, "Rails: go to Controller")
 map("<leader>rv", function() require("rails.navigations").go_to_view() end,               view_desc)
 map("<leader>rs", function() require("rails.navigations").go_to_test("normal") end,       "Rails: go to Spec/Test file")
+
+-- Hide model/test keymaps when in view or Inertia page files
+local function is_view_or_page(path)
+  return path:match("app/views/.*%.html%.erb$") or path:match("app/frontend/pages/")
+end
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = { "*.html.erb", "*.jsx", "*.tsx" },
+  callback = function()
+    local path = vim.fn.expand("%:~:.")
+    if is_view_or_page(path) then
+      vim.keymap.set("n", "<leader>rm", "<nop>", { buffer = true, silent = true, desc = "" })
+      vim.keymap.set("n", "<leader>rs", "<nop>", { buffer = true, silent = true, desc = "" })
+    end
+  end,
+})
