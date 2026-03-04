@@ -23,11 +23,11 @@ When multiple candidates exist a **Telescope picker** opens automatically.
 | model / controller | **view** | `<leader>rv` |
 | model / controller | **test / spec** | `<leader>rs` |
 
-Supports both **minitest** (`test/`) and **RSpec** (`spec/`) projects.
-
 > **Inertia + React support** – when navigating to a view (`<leader>rv`) from a controller that uses `render inertia:`, the plugin resolves the matching `.jsx` / `.tsx` component under `app/frontend/pages/` automatically.
 
 ### Test runner
+Supports both **minitest** (`test/`) and **RSpec** (`spec/`) projects.
+
 Run specs/tests without leaving the editor.  
 Results (pass ✅ / fail ❌) are shown inline in the buffer as virtual text and diagnostics.
 
