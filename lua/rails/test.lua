@@ -6,8 +6,8 @@ local M = {}
 local function run()
   local bufnr = vim.api.nvim_get_current_buf()
   local ns = vim.api.nvim_create_namespace("lazyrails-test")
-  local relative_file_path = vim.fn.expand("%:.")
-  local test_path = relative_file_path
+  local test_path = vim.fn.expand("%:p")
+  local display_name = vim.fn.expand("%:t")
 
   -- Clear extmark
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
@@ -16,7 +16,7 @@ local function run()
   -- Close notification window
   notify_instance.dismiss(bufnr)
 
-  local notification_message = "File: " .. vim.fn.fnamemodify(relative_file_path, ":t")
+  local notification_message = "File: " .. display_name .. "\n" .. test_path
   local notification_title = config.message.file
 
   local notify_record = notify_instance.notify(

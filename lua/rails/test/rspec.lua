@@ -12,7 +12,7 @@ function M.run(test_path, bufnr, ns, terminal_bufnr, notify_record)
       if not data then return end
 
       -- Join all output and extract the JSON object starting with {"version"
-      local full = table.concat(data, "")
+      local full = table.concat(data, "\n")
       local start = full:find('{"version"')
       if not start then return end
 
