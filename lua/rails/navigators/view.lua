@@ -28,7 +28,7 @@ local function find_inertia_pages(root_path, controller_file)
   local lines = vim.fn.readfile(controller_file)
   local pages = {}
   for _, line in ipairs(lines) do
-    local component = line:match([[render%s+inertia:%s*["']([^"']+)["']]])
+    local component = line:match([=[render%s+inertia:%s*["']([^"']+)["']]=])
     if component then
       for _, ext in ipairs({ ".jsx", ".tsx" }) do
         local candidate = "app/frontend/pages/" .. component .. ext
