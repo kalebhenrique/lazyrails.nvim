@@ -40,18 +40,36 @@ map("<leader>rc", function() require("rails.navigations").go_to_controller("norm
 map("<leader>rv", function() require("rails.navigations").go_to_view() end,               view_desc)
 map("<leader>rs", function() require("rails.navigations").go_to_test("normal") end,       "Rails: go to Spec/Test file")
 
--- Hide model/test keymaps when in view or Inertia page files
-local function is_view_or_page(path)
-  return path:match("app/views/.*%.html%.erb$") or path:match("app/frontend/pages/")
+-- Per-buffer: hide keymaps that don't apply to the current file context
+local function get_file_context(path)
+  if path:match("app/models/") then return "model"
+  elseif path:match("app/controllers/") then return "controller"
+  elseif path:match("app/views/") or path:match("app/frontend/pages/") then return "view"
+  elseif path:match("spec/") or path:match("test/") then return "test"
+  end
 end
 
+-- Keys to suppress per context (the one you're already in has no "go to" value)
+local hide_per_context = {
+  model      = { "<leader>rm" },
+  controller = { "<leader>rc" },
+  view       = { "<leader>rm", "<leader>rv", "<leader>rs" },
+  test       = { "<leader>rs" },
+}
+
 vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = { "*.html.erb", "*.jsx", "*.tsx" },
+  pattern = { "*.rb", "*.html.erb", "*.jsx", "*.tsx" },
   callback = function()
     local path = vim.fn.expand("%:~:.")
-    if is_view_or_page(path) then
-      vim.keymap.set("n", "<leader>rm", "<nop>", { buffer = true, silent = true, desc = "" })
-      vim.keymap.set("n", "<leader>rs", "<nop>", { buffer = true, silent = true, desc = "" })
+    local context = get_file_context(path)
+    if not context then return end
+
+    local bufnr = vim.api.nvim_get_current_buf()
+    for _, key in ipairs(hide_per_context[context] or {}) do
+      vim.keymap.set("n", key, "<nop>", { buffer = bufnr, silent = true })
+      if wk_ok then
+        wk.add({ { key, buffer = bufnr, hidden = true } })
+      end
     end
   end,
 })
