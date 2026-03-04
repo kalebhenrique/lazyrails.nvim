@@ -4,67 +4,43 @@ local notify_instance = require("rails.test.notify")
 local M = {}
 
 function M.run(test_path, bufnr, ns, terminal_bufnr, notify_record)
+  M.summary = nil
+
   vim.fn.termopen({ "bundle", "exec", "rspec", test_path, "--format", "j" }, {
     stdout_buffered = true,
     on_stdout = function(_, data)
-      local failed = {}
+      if not data then return end
 
-      if not data then
-        return
-      end
+      -- Join all output and extract the JSON object starting with {"version"
+      local full = table.concat(data, "")
+      local start = full:find('{"version"')
+      if not start then return end
 
-      local function filter_result(response_data)
-        if #response_data == 1 then
-          -- Without hitting the debugger/pry
-          return vim.json.decode(response_data[1])
-        else
-          local function filter_response(response)
-            for _, v in ipairs(response) do
-              if string.find(v, '{"version"') then
-                return v
-              elseif string.find(v, "{\"version\"") then
-                return v
-              end
-            end
+      -- Walk forward counting braces to find the matching closing brace
+      local depth = 0
+      local json_str
+      for i = start, #full do
+        local c = full:sub(i, i)
+        if c == "{" then
+          depth = depth + 1
+        elseif c == "}" then
+          depth = depth - 1
+          if depth == 0 then
+            json_str = full:sub(start, i)
+            break
           end
-
-          local filtered_result = filter_response(response_data)
-
-          local function get_start_index(result)
-            local start, _ = string.find(result, '{"version"')
-            if start == nil then
-              start, _ = string.find(result, '{"version"')
-            end
-
-            return start
-          end
-
-          local function get_finish_index(result)
-            local _, finish = string.find(result, 'failure"}')
-            if finish == nil then
-              _, finish = string.find(result, 'failures"}')
-            end
-            if finish == nil then
-              _, finish = string.find(result, 'pending"}')
-            end
-            if finish == nil then
-              _, finish = string.find(result, 'pendings"}')
-            end
-
-            return finish
-          end
-
-          local start_index = get_start_index(filtered_result)
-          local finish_index = get_finish_index(filtered_result)
-
-          return vim.json.decode(string.sub(filtered_result, start_index, finish_index))
         end
       end
 
-      local result = filter_result(data)
-      M.summary = result.summary
+      if not json_str then return end
 
-      for _, decoded in ipairs(result.examples) do
+      local ok, result = pcall(vim.json.decode, json_str)
+      if not ok or not result then return end
+
+      M.summary = result.summary
+      local failed = {}
+
+      for _, decoded in ipairs(result.examples or {}) do
         if string.find(decoded.file_path, vim.fn.fnamemodify(test_path, ":t:r")) ~= nil then
           if decoded.status == "passed" or decoded.status == "pending" then
             local text = { config.pass_icon, "DiagnosticOk" }
@@ -115,17 +91,21 @@ function M.run(test_path, bufnr, ns, terminal_bufnr, notify_record)
 
       vim.diagnostic.set(ns, bufnr, failed, {})
     end,
-    on_stderr = function(_, data)
-      if data[1] ~= "" then
-        print("Error DATA: ")
-        print(vim.inspect(data))
-      end
-    end,
     on_exit = function()
+      if not M.summary then
+        pcall(notify_instance.notify,
+          "RSpec finished but no JSON output was found.\nCheck that 'rspec' is in your Gemfile and 'bundle exec rspec' works.",
+          vim.log.levels.ERROR,
+          notify_record,
+          { bufnr = bufnr, title = "RSpec: no output" }
+        )
+        vim.api.nvim_buf_delete(terminal_bufnr, {})
+        return
+      end
+
       local message = "Examples: " .. M.summary.example_count .. ", Failures: " .. M.summary.failure_count
 
       local kind
-
       if M.summary.failure_count and M.summary.failure_count > 0 then
         kind = vim.log.levels.ERROR
       else
