@@ -16,7 +16,7 @@ local function run()
   -- Close notification window
   notify_instance.dismiss(bufnr)
 
-  local notification_message = "File: " .. display_name .. "\n" .. test_path
+  local notification_message = "File: " .. display_name
   local notification_title = config.message.file
 
   local notify_record = notify_instance.notify(
