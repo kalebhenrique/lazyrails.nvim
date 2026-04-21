@@ -13,6 +13,7 @@ https://github.com/user-attachments/assets/8e852f1d-24c7-4e42-8a57-fa4e56caa6c1
 ## Features
 
 ### Navigation helpers
+
 Jump from any Rails file to its counterpart.  
 When multiple candidates exist a **Telescope picker** opens automatically.
 
@@ -23,30 +24,18 @@ When multiple candidates exist a **Telescope picker** opens automatically.
 | model / controller | **view** | `<leader>rv` |
 | model / controller | **test / spec** | `<leader>rs` |
 
-> **Inertia + React support** – when navigating to a view (`<leader>rv`) from a controller that uses `render inertia:`, the plugin resolves the matching `.jsx` / `.tsx` component under `app/frontend/pages/` automatically.
+**Inertia + React support** – when navigating to a view (`<leader>rv`) from a controller that uses `render inertia:`, the plugin resolves the matching `.jsx` / `.tsx` component under `app/frontend/pages/` automatically.
 
 ### Test runner
+
 Supports both **minitest** (`test/`) and **RSpec** (`spec/`) projects.
 
-Run specs/tests without leaving the editor.  
-Results (pass ✅ / fail ❌) are shown inline in the buffer as virtual text and diagnostics.
+Run specs/tests directly on the current file and results (pass ✅ / fail ❌) are shown inline in the buffer as virtual text and diagnostics.
 
 | Action | Key |
 |---|---|
 | Run **whole** test file | `<leader>rt` |
 | Clear test results | `<leader>rX` |
-
-### Lint runner
-Run lint directly on the current file with inline diagnostics and pass/fail notification.
-
-| Action | Key |
-|---|---|
-| Run lint for current file | `<leader>rl` |
-| Clear lint results | `<leader>rL` |
-
-Lint behavior is file-type based:
-- `*.rb` → `bundle exec rubocop --format json`
-- `*.html.erb` → `npx --no-install @herb-tools/linter --json` (only when available in project)
 
 RSpec requires no extra setup.  
 Minitest requires [`minitest-json-reporter`](https://rubygems.org/gems/minitest-json-reporter) and **minitest 5.x** (minitest 6+ is not yet compatible):
@@ -59,6 +48,22 @@ group :test do
   gem "minitest-json-reporter"
 end
 ```
+
+### Lint runner
+
+Support **rubocop** and **herb-tools**
+
+Run lint directly on the current file with inline diagnostics and pass/fail notification.
+
+| Action | Key |
+|---|---|
+| Run lint for current file | `<leader>rl` |
+| Clear lint results | `<leader>rL` |
+
+Lint behavior is file-type based:
+
+- `*.rb` → `bundle exec rubocop --format json`
+- `*.html.erb` → `npx --no-install @herb-tools/linter --json`
 
 ---
 
