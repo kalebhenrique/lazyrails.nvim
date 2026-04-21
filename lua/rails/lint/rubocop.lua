@@ -47,11 +47,18 @@ local function close_terminal(terminal_bufnr)
   end
 end
 
-function M.run(lint_path, bufnr, ns, terminal_bufnr, notify_record)
+local function finalize(terminal_bufnr, runtime)
+  if runtime and runtime.on_exit then
+    runtime.on_exit()
+  end
+  close_terminal(terminal_bufnr)
+end
+
+function M.run(lint_path, bufnr, ns, terminal_bufnr, notify_record, runtime)
   local stdout = {}
   local stderr = {}
 
-  vim.fn.termopen({ "bundle", "exec", "rubocop", "--format", "json", "--force-exclusion", lint_path }, {
+  return vim.fn.termopen({ "bundle", "exec", "rubocop", "--format", "json", "--force-exclusion", lint_path }, {
     stdout_buffered = true,
     stderr_buffered = true,
     on_stdout = function(_, data)
@@ -65,6 +72,11 @@ function M.run(lint_path, bufnr, ns, terminal_bufnr, notify_record)
       end
     end,
     on_exit = function(_, code)
+      if runtime and runtime.is_stale and runtime.is_stale() then
+        finalize(terminal_bufnr, runtime)
+        return
+      end
+
       local raw = table.concat(stdout, "\n")
       local decoded
 
@@ -93,7 +105,7 @@ function M.run(lint_path, bufnr, ns, terminal_bufnr, notify_record)
           notify_record,
           { bufnr = bufnr, title = "RuboCop: execution failed" }
         )
-        close_terminal(terminal_bufnr)
+        finalize(terminal_bufnr, runtime)
         return
       end
 
@@ -161,7 +173,7 @@ function M.run(lint_path, bufnr, ns, terminal_bufnr, notify_record)
         { bufnr = bufnr, title = "Result: " .. vim.fn.fnamemodify(lint_path, ":t") }
       )
 
-      close_terminal(terminal_bufnr)
+      finalize(terminal_bufnr, runtime)
     end,
   })
 end
