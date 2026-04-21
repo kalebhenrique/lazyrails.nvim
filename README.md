@@ -36,6 +36,18 @@ Results (pass ✅ / fail ❌) are shown inline in the buffer as virtual text and
 | Run **whole** test file | `<leader>rt` |
 | Clear test results | `<leader>rX` |
 
+### Lint runner
+Run lint directly on the current file with inline diagnostics and pass/fail notification.
+
+| Action | Key |
+|---|---|
+| Run lint for current file | `<leader>rl` |
+| Clear lint results | `<leader>rL` |
+
+Lint behavior is file-type based:
+- `*.rb` → `bundle exec rubocop --format json`
+- `*.html.erb` → `npx --no-install @herb-tools/linter --json` (only when available in project)
+
 RSpec requires no extra setup.  
 Minitest requires [`minitest-json-reporter`](https://rubygems.org/gems/minitest-json-reporter) and **minitest 5.x** (minitest 6+ is not yet compatible):
 
@@ -75,6 +87,11 @@ require("lazyrails").setup({
     fail_icon = "❌",
     notification = { timeout = false },
   },
+  lint = {
+    pass_icon = "✅",
+    fail_icon = "❌",
+    notification = { timeout = false },
+  },
 })
 ```
 
@@ -96,6 +113,7 @@ require("lazyrails").setup({
 | `<leader>rs` | `RailsGoTest` | Go to test / spec file |
 | `<leader>rt` | `RailsTestRun` | Run test file |
 | `<leader>rX` | `RailsTestClear` | Clear test results |
+| `<leader>rl` | `RailsLintRun` | Run lint for current file |
+| `<leader>rL` | `RailsLintClear` | Clear lint results |
 
 All keys live under the **`Rails`** group visible in which-key.
-
