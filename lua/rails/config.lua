@@ -49,6 +49,16 @@ local rails_defaults = {
     },
     pass_icon = "✔",
     fail_icon = "✖"
+  },
+  lint = {
+    message = {
+      file = "Running lint file",
+    },
+    notification = {
+      timeout = false,
+    },
+    pass_icon = "✔",
+    fail_icon = "✖"
   }
 }
 
@@ -57,7 +67,7 @@ function config.set_defaults(user_defaults)
   rails_defaults = rails_defaults
 
   local function get(name, default_val)
-    if name == "test" then
+    if name == "test" or name == "lint" then
       return smarter_depth_2_extend(
         vim.F.if_nil(user_defaults[name], {}),
         vim.tbl_deep_extend("keep", vim.F.if_nil(config.values[name], {}), vim.F.if_nil(default_val, {}))
