@@ -17,6 +17,8 @@ end
 vim.api.nvim_create_user_command("RailsTestRun", function() require("rails.test").run() end, {})
 
 vim.api.nvim_create_user_command("RailsTestClear", function() require("rails.test").clear() end, {})
+vim.api.nvim_create_user_command("RailsLintRun", function() require("rails.lint").run() end, {})
+vim.api.nvim_create_user_command("RailsLintClear", function() require("rails.lint").clear() end, {})
 
 vim.api.nvim_create_user_command("RailsGoModel",      function() require("rails.navigations").go_to_model("normal") end, {})
 vim.api.nvim_create_user_command("RailsGoController", function() require("rails.navigations").go_to_controller("normal") end, {})
@@ -33,6 +35,10 @@ local view_desc = is_inertia_project() and "Rails: go to Page" or "Rails: go to 
 -- Test runner
 map("<leader>rt", function() require("rails.test").run() end,  "Rails: run test file")
 map("<leader>rX", function() require("rails.test").clear() end, "Rails: clear test results")
+
+-- Lint runner
+map("<leader>rl", function() require("rails.lint").run() end, "Rails: run lint file")
+map("<leader>rL", function() require("rails.lint").clear() end, "Rails: clear lint results")
 
 -- Navigation
 map("<leader>rm", function() require("rails.navigations").go_to_model("normal") end,      "Rails: go to Model")
