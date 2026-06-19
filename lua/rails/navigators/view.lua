@@ -1,18 +1,8 @@
 local M = {}
 
-local pickers = require "telescope.pickers"
-local finders = require "telescope.finders"
-local previewers = require "telescope.previewers"
-local conf = require("telescope.config").values
-
 local function open_picker(results, title)
-  local opts = {}
-  pickers.new(opts, {
-    prompt_title = title,
-    finder = finders.new_table { results = results },
-    previewer = previewers.vim_buffer_cat.new(opts),
-    sorter = conf.generic_sorter(opts),
-  }):find()
+  local picker = require("rails.picker")
+  picker.pick(results, title)
 end
 
 local function notify_not_found(msg)

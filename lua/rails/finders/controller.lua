@@ -1,10 +1,6 @@
 local M = {}
 
 function M.find()
-  local pickers = require "telescope.pickers"
-  local finders = require "telescope.finders"
-  local previewers = require "telescope.previewers"
-  local conf = require("telescope.config").values
   local root_path = vim.fn.getcwd()
   local controllers = vim.split(vim.fn.glob(root_path .. "/app/controllers/**/*rb"), "\n")
   local parsed_controllers = {}
@@ -16,15 +12,10 @@ function M.find()
     end
   end
 
-  local opts = {}
-  pickers.new(opts, {
-    prompt_title = "Controllers",
-    finder = finders.new_table {
-      results = parsed_controllers
-    },
-    previewer = previewers.vim_buffer_cat.new(opts),
-    sorter = conf.generic_sorter(opts),
-  }):find()
+  if #parsed_controllers > 0 then
+    local picker = require("rails.picker")
+    picker.pick(parsed_controllers, "Controllers")
+  end
 end
 
 return M

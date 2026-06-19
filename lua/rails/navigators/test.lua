@@ -11,30 +11,8 @@ local function open_file(path, mode)
 end
 
 local function show_picker(title, results, mode)
-  local pickers   = require "telescope.pickers"
-  local finders   = require "telescope.finders"
-  local previewers = require "telescope.previewers"
-  local conf      = require("telescope.config").values
-  local opts = {}
-  pickers.new(opts, {
-    prompt_title = title,
-    finder = finders.new_table { results = results },
-    previewer = previewers.vim_buffer_cat.new(opts),
-    sorter = conf.generic_sorter(opts),
-    attach_mappings = function(prompt_bufnr, map)
-      local actions = require "telescope.actions"
-      local action_state = require "telescope.actions.state"
-      -- override the default select action to respect vsplit mode
-      actions.select_default:replace(function()
-        actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-        if selection then
-          open_file(selection[1], mode)
-        end
-      end)
-      return true
-    end,
-  }):find()
+  local picker = require("rails.picker")
+  picker.pick(results, title, mode)
 end
 
 local function notify_not_found(name)

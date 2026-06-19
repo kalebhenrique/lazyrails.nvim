@@ -4,20 +4,20 @@
 local M = {}
 
 --- Navigate to the associated model file.
---- Opens a Telescope picker when multiple matches are found.
+--- Opens a Snacks picker when multiple matches are found.
 --- @param mode "normal"|"vsplit"
 function M.go_to_model(mode)
   require("rails.navigators.model").visit(mode)
 end
 
 --- Navigate to the associated controller file.
---- Opens a Telescope picker when multiple matches are found.
+--- Opens a Snacks picker when multiple matches are found.
 --- @param mode "normal"|"vsplit"
 function M.go_to_controller(mode)
   require("rails.navigators.controller").visit(mode)
 end
 
---- Navigate to the associated view directory (Telescope picker).
+--- Navigate to the associated view directory (Snacks picker).
 function M.go_to_view()
   require("rails.navigators.view").visit()
 end

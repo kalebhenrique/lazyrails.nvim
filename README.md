@@ -15,7 +15,7 @@ https://github.com/user-attachments/assets/8e852f1d-24c7-4e42-8a57-fa4e56caa6c1
 ### Navigation helpers
 
 Jump from any Rails file to its counterpart.  
-When multiple candidates exist a **Telescope picker** opens automatically.
+When multiple candidates exist a **Snacks picker** opens automatically.
 
 | From | To | Key |
 |---|---|---|
@@ -76,7 +76,7 @@ Lint behavior is file-type based:
   "kalebhenrique/lazyrails.nvim",
   ft = { "ruby", "eruby" },
   dependencies = {
-    "nvim-telescope/telescope.nvim",
+    "folke/snacks.nvim",
     "nvim-lua/plenary.nvim",
   },
   opts = {}, -- see Configuration section below

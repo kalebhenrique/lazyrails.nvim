@@ -23,19 +23,8 @@ function M.visit(mode)
     end
 
     if #parsed_controllers > 1 then
-      local pickers = require "telescope.pickers"
-      local finders = require "telescope.finders"
-      local previewers = require "telescope.previewers"
-      local conf = require("telescope.config").values
-      local opts = {}
-      pickers.new(opts, {
-        prompt_title = "Controllers",
-        finder = finders.new_table {
-          results = parsed_controllers
-        },
-        previewer = previewers.vim_buffer_cat.new(opts),
-        sorter = conf.generic_sorter(opts),
-      }):find()
+      local picker = require("rails.picker")
+      picker.pick(parsed_controllers, "Controllers")
     elseif #parsed_controllers == 1 then
       if mode == "normal" then
         vim.cmd.edit(parsed_controllers[1])
@@ -77,17 +66,8 @@ function M.visit(mode)
     end
 
     if #parsed_controllers > 1 then
-      local pickers   = require "telescope.pickers"
-      local finders   = require "telescope.finders"
-      local previewers = require "telescope.previewers"
-      local conf      = require("telescope.config").values
-      local opts = {}
-      pickers.new(opts, {
-        prompt_title = "Controllers",
-        finder = finders.new_table { results = parsed_controllers },
-        previewer = previewers.vim_buffer_cat.new(opts),
-        sorter = conf.generic_sorter(opts),
-      }):find()
+      local picker = require("rails.picker")
+      picker.pick(parsed_controllers, "Controllers")
     elseif #parsed_controllers == 1 then
       if mode == "normal" then
         vim.cmd.edit(parsed_controllers[1])
@@ -124,19 +104,8 @@ function M.visit(mode)
     end
 
     if #parsed_controllers > 1 then
-      local pickers = require "telescope.pickers"
-      local finders = require "telescope.finders"
-      local previewers = require "telescope.previewers"
-      local conf = require("telescope.config").values
-      local opts = {}
-      pickers.new(opts, {
-        prompt_title = "Controllers",
-        finder = finders.new_table {
-          results = parsed_controllers
-        },
-        previewer = previewers.vim_buffer_cat.new(opts),
-        sorter = conf.generic_sorter(opts),
-      }):find()
+      local picker = require("rails.picker")
+      picker.pick(parsed_controllers, "Controllers")
     elseif #parsed_controllers == 1 then
       if mode == "normal" then
         vim.cmd.edit(parsed_controllers[1])
@@ -170,17 +139,8 @@ function M.visit(mode)
     end
 
     if #controllers > 1 then
-      local pickers   = require "telescope.pickers"
-      local finders   = require "telescope.finders"
-      local previewers = require "telescope.previewers"
-      local conf      = require("telescope.config").values
-      local opts = {}
-      pickers.new(opts, {
-        prompt_title = "Controllers",
-        finder = finders.new_table { results = controllers },
-        previewer = previewers.vim_buffer_cat.new(opts),
-        sorter = conf.generic_sorter(opts),
-      }):find()
+      local picker = require("rails.picker")
+      picker.pick(controllers, "Controllers")
     elseif #controllers == 1 then
       if mode == "normal" then
         vim.cmd.edit(controllers[1])
